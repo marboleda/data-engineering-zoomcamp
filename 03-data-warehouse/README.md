@@ -1,0 +1,1 @@
+Please find the homework-related SQL statements in the file "homework-3.sql"
