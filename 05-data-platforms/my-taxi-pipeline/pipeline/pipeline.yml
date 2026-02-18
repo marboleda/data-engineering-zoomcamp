@@ -3,7 +3,7 @@ schedule: daily
 start_date: "2022-01-01"
 
 default_connections:
-  duckdb: duckdb-default
+  bigquery: gcp-default
 
 variables:
   taxi_types:

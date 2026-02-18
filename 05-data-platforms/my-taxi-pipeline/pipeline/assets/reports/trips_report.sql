@@ -7,7 +7,7 @@
 # - Quality checks: https://getbruin.com/docs/bruin/quality/available_checks
 name: reports.trips_report
 
-type: duckdb.sql
+type: bq.sql
 
 depends:
   - staging.trips

@@ -6,7 +6,7 @@
 # - Custom checks: https://getbruin.com/docs/bruin/quality/custom
 
 name: staging.trips
-type: duckdb.sql
+type: bq.sql
 
 depends:
   - ingestion.trips
@@ -29,9 +29,11 @@ custom_checks:
 
 WITH cleaned AS (
   SELECT
+  /* -- DISTINCT ON is not valid BigQuery syntax despite being valid for DuckDB
     DISTINCT ON (
       vendor_id, tpep_pickup_datetime, tpep_dropoff_datetime, pu_location_id, do_location_id, payment_type, fare_amount
     )
+  */
       vendor_id,
       tpep_pickup_datetime AS pickup_datetime,
       tpep_dropoff_datetime AS dropoff_datetime,
@@ -65,6 +67,9 @@ WITH cleaned AS (
     AND trip_distance >= 0
     AND passenger_count >= 0
     AND total_amount >= 0
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY vendor_id, tpep_pickup_datetime, tpep_dropoff_datetime, pu_location_id, do_location_id, payment_type, CAST(fare_amount AS NUMERIC)
+  ) = 1
 )
 SELECT
   c.vendor_id,
